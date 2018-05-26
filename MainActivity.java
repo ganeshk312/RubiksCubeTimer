@@ -31,7 +31,21 @@ public class MainActivity extends AppCompatActivity {
     Handler myHandler = new Handler();
     Long time;
     Long timeInMillies, finalTime, startTime;
+    Runnable updateTimerMethod = new Runnable() {
+        public void run() {
 
+            timeInMillies = SystemClock.uptimeMillis() - startTime;
+            finalTime = timeInMillies;
+
+            int seconds = (int) (finalTime / 1000);
+            int minutes = seconds / 60;
+            seconds = seconds % 60;
+            int milliseconds = (int) (finalTime % 1000) / 10;
+            TextView solveTime = (TextView) findViewById(R.id.solveTime);
+            solveTime.setText("" + String.format("%02d", minutes) + ":" + String.format("%02d", seconds) + ":" + String.format("%02d", milliseconds));
+            myHandler.postDelayed(this, 0);
+        }
+    };
     private boolean stopWatchStatus = false;
 
     @Override
@@ -67,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "15sec of Inspection Time started", Toast.LENGTH_SHORT).show();
 Beep=0;
             tapStatus = 1;
-            countDownTimer = new CountDownTimer(5000, 10) {
+            countDownTimer = new CountDownTimer(15000, 10) {
                 public void onTick(long millisUntilFinished) {
                     updateTimer(millisUntilFinished);
 
@@ -90,8 +104,7 @@ Beep=0;
         Long milliSec = (millisUntilFinished % 1000) / 10;
 
 
-
-        if (sec==3&&milliSec<2&&Beep==0) {
+        if (sec == 3 && milliSec < 1 && Beep == 0) {
             Toast.makeText(this, "3 sec left for inspection",Toast.LENGTH_SHORT ).show();
             ToneGenerator toneGen=new ToneGenerator(AudioManager.STREAM_MUSIC,100);
             toneGen.startTone(ToneGenerator.TONE_PROP_BEEP);
@@ -116,21 +129,6 @@ Beep=0;
         startTime = SystemClock.uptimeMillis();
         myHandler.postDelayed(updateTimerMethod, 0);
     }
-    Runnable updateTimerMethod = new Runnable() {
-        public void run() {
-
-            timeInMillies = SystemClock.uptimeMillis() - startTime;
-            finalTime = timeInMillies;
-
-            int seconds = (int) (finalTime / 1000);
-            int minutes = seconds / 60;
-            seconds = seconds % 60;
-            int milliseconds = (int) (finalTime % 1000)/10;
-            TextView solveTime = (TextView) findViewById(R.id.solveTime);
-            solveTime.setText("" + String.format("%02d",minutes) + ":" + String.format("%02d", seconds) + ":" + String.format("%02d", milliseconds));
-            myHandler.postDelayed(this, 0);
-        }
-    };
 
     public void stopStopWatch() {
         myHandler.removeCallbacks(updateTimerMethod);
